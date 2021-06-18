@@ -1,2 +1,2 @@
 # bash_build_config
-Configuration tools using bash
+Build tool configuration scripts
