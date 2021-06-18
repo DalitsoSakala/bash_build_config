@@ -1,0 +1,42 @@
+declare -A files=( ['version: ']='pubspec.yaml' ['flutterVersionName= ']='android/app/build.gradle' )
+
+TRACKING_KEY=xCfg_version
+
+major=$1
+minor=$2
+suffix=$3
+
+retVal=''
+if [ -z $major ]; then major=0 ; fi
+if [ -z $minor ]; then minor=0 ; fi
+if [ -z $suffix ]; then suffix='' ; fi
+
+function search_and_replace_version_argument(){
+	local found
+	local line
+	local replacement
+	found=`cat $0 | grep -o $TRACKING_KEY`
+	if [[ $found -ne $TRACKING_KEY ]]; then echo `tput setaf 1` the queried tracking key was not found. Queried key `tput bold` \'$TRACKING_KEY\'  `tput sgr0`;
+	else
+0.0.67
+0.0.67
+		compute_version
+		replacement=$retVal
+		sed -i.original "${line}s/.*/${replacement}/" $0
+	fi
+}
+
+
+function compute_version(){
+	local branch
+	local commits
+	branch=`git branch | grep -o '[^\*]*'`
+	commits=`git rev-list --count $branch`
+	retVal=${major}.${minor}.${commits}${suffix}
+}
+
+for key in ${!files[@]}
+	do
+		echo $key
+		search_and_replace_version_argument ${files[$key]} $key
+	done
